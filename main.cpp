@@ -71,12 +71,21 @@ void update(std::vector<std::vector<Cell*> >& cells, Cell& cell)
 
 void print(std::vector<std::vector<Cell*> >& cells, Cell& cell)
 {
-    mvwaddch(stdscr, cell.y, cell.x, cell.aliveNow ? 'X' : ' ');
+    if (cell.aliveNow)
+    {
+        wattron(stdscr, COLOR_PAIR(2));
+        mvwaddch(stdscr, cell.y, cell.x, 'X');
+        wattroff(stdscr, COLOR_PAIR(2));
+    }
+    else
+    {
+        mvwaddch(stdscr, cell.y, cell.x, ' ');
+    }
 }
 
 void random(std::vector<std::vector<Cell*> >& cells, Cell& cell)
 {
-    cell.aliveNow = (rand() % 5 == 0) ? true : false;
+    cell.aliveNow = (rand() % 7 == 0) ? true : false;
 }
 
 void map(std::vector<std::vector<Cell*> >& cells, void (*apply)(std::vector<std::vector<Cell*> >& cells, Cell& cell) )
@@ -97,7 +106,11 @@ int main(int argc, char* argv[])
     cbreak();
     noecho();
     curs_set(0);
+    start_color();
     getmaxyx(stdscr, height, width);
+
+    init_pair(2, COLOR_WHITE, COLOR_WHITE);
+
     std::vector<std::vector<Cell*> > cells;   
     for (int x = 0; x < width; x++)
     {
